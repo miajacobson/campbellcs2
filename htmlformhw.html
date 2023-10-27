@@ -1,0 +1,129 @@
+<!DOCTYPE html><!--defines doctype as html form-->
+<html>
+<head>
+    <title>Simple Form</title>
+</head>
+<body>
+    <h1>Post Office Calculator</h1><!-- makes title'-->
+
+<form id="myForm">
+        <label>Length:</label>                                      <!-- makes a label appear with the text 'Label:'-->
+        <input type="text" id="length" name="lenght" value="4"><br>
+        <label>Height:</label>                                      <!-- makes a label appear with the text 'Height:'-->
+        <input type="text" id="height" name="height" value="4"><br>
+        <label>Width:</label>                                       <!-- makes a label appear with the text 'Width:'-->
+        <input type="text" id="width" name="width" value=".009"><br>
+        <label>Starting Zip:</label>                                <!-- makes a label appear with the text 'Starting Zip:'-->
+        <input type="text" id="startingzip" name="startingzip" value="02893"><br>
+        <label>Ending Zip:</label>                                  <!-- makes a label appear with the text 'Ending Zip:'-->
+        <input type="text" id="endingzip" name="endingzip" value="08596"><br>
+      </form><br>
+
+      <button type="button" onclick="the_main()">Calculate!</button><!-- makes a button appear with the text 'Calculate!'-->
+      <p id="message"></p>
+
+      <img src="postofficepic.jpg" alt=" mailing packages" width="450" height="300"><!-- makes a picture appear with the dimensions 450"x300"-->
+
+    <script>
+
+        function the_main() {  //calls main function
+           
+            var length = parseFloat(document.getElementById("length").value); //defines variable length
+            var height = parseFloat(document.getElementById("height").value); //defines variable height
+            var width = parseFloat(document.getElementById("width").value);//defines variable width
+            var startingzip = parseFloat(document.getElementById("startingzip").value);//defines variable startingzip
+            var endingzip = parseFloat(document.getElementById("endingzip").value);//defines variable endingzip
+
+            length = parseFloat(length)//translates length variable into an interperatable numerical value
+            height = parseFloat(height)//translates height variable into an interperatable numerical value
+            width = parseFloat(width)//translates width variable into an interperatable numerical value
+            startingzip = parseFloat(startingzip)//translates startingzip variable into an interperatable numerical value
+            endingzip = parseFloat(endingzip)//translates length endingzip into an interperatable numerical value
+            
+            postage_class = getsize(length, height, width)  //calls getsize function
+
+            if (postage_class == "NO") //tells what to do in the event that the package does not fit the requirements of one of the package types
+            {
+                const message = document.getElementById("message");//makes following message appear on the website screen
+
+                 message.innerHTML = "UNMAILABLE"//tells this message to say 'UNMAILABLE'
+            }
+
+            else{// tells what to do in the event that the package fits the requirements of one of the package types
+            zone_travel = Math.abs(getzip(endingzip) - getzip(startingzip))//calculates zone travel by calling two zip variables and subtracting them 
+            cost = calculate(postage_class, zone_travel)//calculates cost using package type and zone travel
+            const message = document.getElementById("message");//makes foloowing message appear on the website screen
+          
+            cost = cost.toString()                       //converts cost to a string
+            
+            
+            if (cost.substring(0,1) == "0") //checks for leading zero                           
+                cost = cost.substring(1)//strips leading zero- uses array model to strip before position 1 hence "(1)" in the code
+            
+            if (cost.length == 2)//checks for a number with 2 digits("." counts) 
+                cost = cost + "0"//adds a zero at the end of a number
+
+
+            message.innerHTML = cost//tells this message to say the cost
+            }
+            
+        }        
+
+        function getsize(length, height, width) { //defines getsize function
+
+            if ((length >= 3.5 && length <= 4.25) && (height >= 3.5 && height <= 6) && (width >= .007 && width <= .016)) { //this is requirements for a regular post card
+                post = "regular pc"; // labels package type as regular post card
+            } else if ((length > 4.25 && length < 6) && (height > 6 && height < 11.5) && (width >= .007 && width <= .015)) {//this is requirements for a large post card
+                post =  "large pc";// labels package type as large post card
+            } else if ((length >= 3.5 && length <= 6.125) && (height >= 5 && height <= 11.5) && (width > .016 && width < .25)) { //this is requirements for an envelope
+                post =  "envp";// labels package type as envelope
+            } else if ((length > 6.125 && length < 24) && (height >= 11 && height <= 18) && (width >= .25 && width <= .5)) { //this is requirements for a large envelope
+                post =  "large envp"// labels package type as large envelope
+            } else if (((length > 24) || (height > 18) || (width > .5)) && (length + length + width + width + height + height <= 84)) { //this is requirements for a package
+                post = "pkg";// labels package type as package
+            } else if (((length > 24) || (height > 18) || (width > .5)) && ((length + length + width + width + height + height > 84) && (length + length + width + width + height + height <= 130))){ //this is requirements for a large package
+                post =  "large pkg";   // labels package type as large package
+            } else {//if none of the prevoius requirements fit do the following
+                post = "NO"// labels package type as 'NO'
+            }
+            return post//returns package type
+
+        }
+
+        function getzip(zip) {//defines getzip function
+            if (zip >= 1 && zip<= 6999) {//requirements for zip 1
+                return  1;//returns zip 1
+            } else if (zip >= 7000 && zip <= 19999) {//requirements for zip 2
+                return  2;//returns zip 2
+            } else if (zip >= 20000 && zip <= 35999) {//requirements for zip 3
+                return  3;//returns zip 3
+            } else if (zip >= 36000 && zip <= 62999) {//requirements for zip 4
+                return  4;//returns zip 4
+            } else if (zip >= 63000 && zip <= 84999) {//requirements for zip 5
+                return  5;//returns zip 5
+            } else if (zip >= 85000 && zip <= 99999) {//requirements for zip 6
+                return  6;//returns zip 6
+            }
+
+        }
+
+        function calculate(postage_class, zone_travel) {//defines calculate function
+            if (postage_class == ("regular pc")) {//if package type is regular pc do the following
+                cost = .20 + .03 * zone_travel;//cost formula for regular pc
+            } else if (postage_class == ("large pc")) {//if package type is large pc do the following
+                cost = .37 + .03 * zone_travel;//cost formula for large pc
+            } else if (postage_class == ("envp")) {//if package type is envp do the following
+                cost = .37 + .04 * zone_travel;//cost formula for envp
+            } else if (postage_class == ("large envp")) {//if package type is large envp do the following
+                cost = .60 + .05 * zone_travel;//cost formula for large envp
+            } else if (postage_class == ("pkg")) {//if package type is pkg do the following
+                cost = 2.95 + .25 * zone_travel;//cost formula for pkg
+            } else if (postage_class == ("large pkg")) {//if package type is large pkg do the following
+                cost = 3.95 + .35 * zone_travel;//cost formula for large pkg
+            }
+            return cost//retuens cost
+        }
+
+    </script>
+</body>
+</html>
