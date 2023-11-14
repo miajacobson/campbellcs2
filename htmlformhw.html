@@ -36,15 +36,15 @@ Due 11/01/23
             var length = parseFloat(document.getElementById("length").value); 
             var height = parseFloat(document.getElementById("height").value); 
             var width = parseFloat(document.getElementById("width").value);
-            var startingzip = parseFloat(document.getElementById("startingzip").value);
-            var endingzip = parseFloat(document.getElementById("endingzip").value);
+            var starting_zip = parseFloat(document.getElementById("startingzip").value);
+            var ending_zip = parseFloat(document.getElementById("endingzip").value);
 
             //converts variables into interperatable numerical values
             length = parseFloat(length)
             height = parseFloat(height)
             width = parseFloat(width)
-            startingzip = parseFloat(startingzip)
-            endingzip = parseFloat(endingzip)
+            starting_zip = parseFloat(startingzip)
+            ending_zip = parseFloat(endingzip)
             
             postage_class = getsize(length, height, width)  //calls getsize function
             
@@ -57,7 +57,7 @@ Due 11/01/23
             }
 
             else{// process for what to do when the package is mailable
-            zone_travel = Math.abs(get_zip(endingzip) - get_zip(startingzip))
+            zone_travel = Math.abs(get_zip(ending_zip) - get_zip(starting_zip))
             cost = calculate(postage_class, zone_travel)
             const message = document.getElementById("message");
           
