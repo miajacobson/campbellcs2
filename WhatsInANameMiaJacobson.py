@@ -85,9 +85,15 @@ def main():
         elif select == 'Q':
             print("bye!")
             break
+        else: #dangling else for all non-valid inputs
+            print("Invalid response. Please select an integer between 1 and 16, or type 'Q' to quit. ")
             
 
-def vowel_count(word): #determines vowel frequency of a name
+def vowel_count(word): 
+    #determines vowel frequency of a word
+    #parameter(what function takes in): the word
+    #returns number of vowels in a word
+    
     counter = 0
     for letter in word:
         if letter == "a":
@@ -104,7 +110,10 @@ def vowel_count(word): #determines vowel frequency of a name
             counter = counter +1
     return counter
    
-def consonant_count(word): #determines consonant frequency of a name
+def consonant_count(word): 
+    #determines consonant frequency of a word
+    #parameter: the word
+    #returns number of consonants in a word
     counter = 0
     vowels = ["a","e","i","o","u","y"]
     space = [" "]
@@ -114,18 +123,28 @@ def consonant_count(word): #determines consonant frequency of a name
     return counter
 
 def reverse_word(word):
+    #determines the inputted word in reverse
+    #parameter: the word
+    #returns the word backwards
+
     return word[::-1] #returns  word, but reversed
         
-def convert_lower(word): #converts string to lowercase
+def convert_lower(word): 
+    #converts string to lowercase
+    #parameter: the word
+    #returns lowercase version of word
     new_word = ""
     for letter in word:
-        if ord(letter) in range(65,90): #checks to see if a character is uppercase based on corresonding ascii number values 
+        if ord(letter) in range(65,90): #checks to see if a character is uppercase based on correponding ascii number values 
             new_word += chr(ord(letter) + 32) #adds 32 (the number needed to make a letter lowercase) to the ascii value
         else:
             new_word += letter
     return new_word
 
-def convert_upper(word): #converts string to uppercase
+def convert_upper(word):
+    #converts string to uppercase
+    #parameter: the word
+    #returns uppercase version of word
     new_word = ""
     for letter in word:
         if ord(letter) in range(97,122): #checks to see if a character is lowercase  based on corresonding ascii number values
@@ -134,65 +153,101 @@ def convert_upper(word): #converts string to uppercase
             new_word += letter
     return new_word
 
-def first_name(word): #returns first name
-    for i, letter in enumerate(word): 
-        if letter == " ":
-            return word[:i]   
+def first_name(word): 
+    #determines first name 
+    #parameter: a full name
+    #returns first name
+
+    for i, letter in enumerate(word): #iterate through list by position, letter
+        if letter == " ": #if letter is a space...
+            return word[:i] #returns all letters before the space
         
     return word
 
-def last_name(word): #returns last name
-    for i, letter in enumerate(word[::-1]): #iterates through word backward
-        if letter == " ":
-            return word[len(word) - i:]
+def last_name(word):
+    #determines last name 
+    #parameter: a full name
+    #returns last name
+    for i, letter in enumerate(word[::-1]): #iterate through list backwards by position, letter
+        if letter == " ": #if letter is a space...
+            return word[len(word) - i:] #returns all letters after space(when iterated through backwards)
         
-def middle_name(word): #returns middle name
-    for i, letter in enumerate(word):
-        if letter == " ":
-            start = i
+def middle_name(word): 
+    #determines middle name 
+    #parameter: a full name
+    #returns middle name
+
+    for i, letter in enumerate(word): #iterate through list by position, letter
+        if letter == " ": #if letter is a space...
+            start = i   #new word is identified to start after space
             break
     
-    for i, letter in enumerate(word[::-1]):
-        if letter == " ":
-            end = len(word) - i
+    for i, letter in enumerate(word[::-1]): #iterate through list backwards by position, letter
+        if letter == " ": #if letter is a space...
+            end = len(word) - i #counter tool to determine last space
             break
     
     if start +1 != end: #checks to see if there is a word between the first and last name
         return word[start + 1:end]
 
-def check_hyphen(word): #checks if there is a hyphen in word
+def check_hyphen(word): 
+    #determines the presence of a hyphen in a word 
+    #parameter: a word
+    #returns T/F if there is a hyphen
     return "-" in word
 
-def make_initials(word): #returns the first letter of each word in inputted name
+def make_initials(word): 
+    #returns the first letter of each name (initials)
+    #parameter: a full name
+    #returns initials
     return ' '.join([first_name(word)[0], middle_name(word)[0], last_name(word)[0]]) #returns the first letter of each word back into a string form
 
 def random_name(word):
+    #returns the word with the letters in randomized order
+    #parameter: a word
+    #returns scrambled name
     word = list(word)
-    random.shuffle(word) #shuffles thr letters of the word using the imported random
+    random.shuffle(word) 
     return ''.join(word) #returns word back into a string form
 
-def check_palindrome(word): #checks if the name is the same forward and backward
+def check_palindrome(word): 
+    #determines the presence of a palindrome in a word 
+    #parameter: a word
+    #returns T/F if word is a palindrome
     return first_name(word) == first_name(word)[::-1]
 
 
-def check_title(word): #checks to see if the name contains a title
+def check_title(word): 
+    #checks to see if the name contains a title
+    #parameter: a name
+    #returns T/F if name has a title
+
     title = ["Mr.", "Mrs.", "Dr.", "Sir", "Esq", "Ph.d", "Ms.", "Miss", "Lord", "Lady", "Dame", "Gen", "Lt. Gen", "Maj. Gen", "Capt."]
     for prefix in title: #for any of the given options (e.g. Mr., Mrs., etc.) in the list names "title"
         if prefix in word:
             return "True"
     return "False"
 
-def sorted_array(word): #changes the name into an array of characters in an alphabetical order
+def sorted_array(word): 
+    #changes the name into an array of characters in an alphabetical order
+    #parameter: a name
+    #returns name with letters in alphabetical order
+
     name = list(word)
     name.sort() 
     return ''.join(name) #returns word back into a string form
 
-def len_name(word): #returns the length of the word
+def len_name(word): 
+    #determines the length of the word
+    #parameter: a word
+    #returns number of letters in word
     return len(word)
 
-def format_name(word): #formats word in last, first format
+def format_name(word): 
+    #displays name in last, first format
+    #parameter: a name
+    #returns name in "last name, first name" format
     return last_name(word) + "," + first_name(word)
-
 
 
 if __name__ == '__main__':
