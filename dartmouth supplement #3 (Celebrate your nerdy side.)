@@ -1,0 +1,26 @@
+def main():
+
+
+    while True:
+        print("Enter a number… or 'Q' to (Q)uit:")
+        print("1) Why do you love to code?")
+        print("2) What makes a good script?")
+        print("3) With whom do you share this experience?") 
+
+        select = input("") 
+
+        if select == '1':
+            print("It’s the clacking of keys, a sensory delight that is soothing to my ears as I simplify complex problems into characters on a screen. It's the “aha” moment when, after being presented with a problem, I arrive at a solution that an hour or two or five ago I couldn't yet see. It's the adrenaline rush I experience when a code I write from scratch runs without a red error message taunting me.")
+       
+        elif select == '2':
+            print(" I have learned to embrace pseudo code, the foundation of all successful scripts. It's the foreplanning that you so badly want to skip and yet so very much need in order to succeed. It's the mise en place before you begin to cook dinner. And then there's documentation. This ensures that not only you and your collaborators, but also future you, will be able to comprehend and advance the jargon on the screen.")
+       
+        elif select == '3':
+            print("I share this experience with the 11 other like minded problem solvers in my class, all of whom happen to be boys. I share this experience with my beloved teacher, Mr. Campbell. A girl who has self-selected into a computer science course exclusively of boys is a particularly intrepid breed of nerd.")
+
+        elif select == 'Q':
+           print("bye!")
+
+    
+if __name__ == '__main__':
+        main()
