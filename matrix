@@ -1,0 +1,122 @@
+#Mia W. Jacobson
+#CSX - 'Matrices'
+#Description: This assignment performs automated matrix operations.
+#11/12/24
+
+
+class matrix:
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.data = [[0 for _ in range(cols)] for _ in range(rows)]
+
+
+    def print(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                print(self.data[i][j], end=" ")
+            print()
+
+
+    def plus(self, m1):
+        
+        ralph = matrix(3,3)
+        
+        ralph.data[0][0] = m1.data[0][0] + self.data[0][0]
+        ralph.data[0][1] = m1.data[0][1] + self.data[0][1]
+        ralph.data[0][2] = m1.data[0][2] + self.data[0][2]
+        
+        ralph.data[1][0] = m1.data[1][0] + self.data[1][0]
+        ralph.data[1][1] = m1.data[1][1] + self.data[1][1]
+        ralph.data[1][2] = m1.data[1][2] + self.data[1][2]
+         
+        ralph.data[2][0] = m1.data[2][0] + self.data[2][0]
+        ralph.data[2][1] = m1.data[2][1] + self.data[2][1]
+        ralph.data[2][2] = m1.data[2][2] + self.data[2][2]
+        
+        return ralph
+    
+
+    def times(self,m1):
+        
+        ralph = matrix(3,3)
+    
+        ralph.data[0][0] = (m1.data[0][0] * self.data[0][0]) + (m1.data[0][1] * self.data[1][0]) + (m1.data[0][2] * self.data[2][0])
+        ralph.data[0][1] = (m1.data[0][0] * self.data[0][1]) + (m1.data[0][1] * self.data[1][1]) + (m1.data[0][2] * self.data[2][1])
+        ralph.data[0][2] = (m1.data[0][0] * self.data[0][2]) + (m1.data[0][1] * self.data[1][2]) + (m1.data[0][2] * self.data[2][2])
+        
+        ralph.data[1][0] = (m1.data[1][0] * self.data[0][0]) + (m1.data[1][1] * self.data[1][0]) + (m1.data[1][2] * self.data[2][0])
+        ralph.data[1][1] = (m1.data[1][0] * self.data[0][1]) + (m1.data[1][1] * self.data[1][1]) + (m1.data[1][2] * self.data[2][1])
+        ralph.data[1][2] = (m1.data[1][0] * self.data[0][2]) + (m1.data[1][1] * self.data[1][2]) + (m1.data[1][2] * self.data[2][2])
+         
+        ralph.data[2][0] = (m1.data[2][0] * self.data[0][0]) + (m1.data[2][1] * self.data[1][0]) + (m1.data[2][2] * self.data[2][0])
+        ralph.data[2][1] = (m1.data[2][0] * self.data[0][1]) + (m1.data[2][1] * self.data[1][1]) + (m1.data[2][2] * self.data[2][1])
+        ralph.data[2][2] = (m1.data[2][0] * self.data[0][2]) + (m1.data[2][1] * self.data[1][2]) + (m1.data[2][2] * self.data[2][2])
+
+        return ralph
+    
+
+    def scalarTimesRow(self, scalar, row):
+        for i, cell in enumerate(self.data[row]):
+            self.data[row][int(i)-1] = cell * scalar
+
+
+
+if __name__ == "__main__":
+
+    alice = matrix(3,3)
+    alice.data = [[1,2,3],
+                   [1,2,3],
+                   [1,2,3]]
+    
+
+    trixie = matrix(3,3)
+    trixie.data = [[1,2,3],
+                   [1,2,3],
+                   [1,2,3]]
+    
+
+    
+    while True:    #creates infinity loop for menu below  
+        print("Menu: Enter Choice or 'Q' to (Q)uit:")
+        print("1) Print Matrices")
+        print("2) Add matrices")
+        print("3) Multiply Matrices")
+        print("4) Multiply row by scalar")
+
+
+        select = input("")    #menu for inputs             
+
+        if select == '1':
+            print("alice: ")
+            alice.print()
+            print('')
+            print("trixie: ")
+            trixie.print()
+        
+        if select == '2':
+            ralph = trixie.plus(alice)
+            print("sum of matrices: ")
+            print('')
+            ralph.print()
+
+        if select == '3':
+            ralph = trixie.times(alice)
+            print("product of matrices: ")
+            print('')
+            ralph.print()
+        
+        if select == '4':
+            choose = input("multiply scalar times a row in trixie or alice? (t or a)")
+
+            scalar = float(input("scalar: "))
+            row = int(input("row: "))
+
+            if choose == "t":
+                trixie.scalarTimesRow(scalar, row)
+                trixie.print()
+
+            elif choose == "a":
+               alice.scalarTimesRow(scalar, row)
+               alice.print()
+    
