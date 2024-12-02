@@ -306,7 +306,6 @@ if __name__ == "__main__":
         if select == '8':
             if random_plus_identity.Matrix_invert() != "kill":
                 
-                random_plus_identity.print()
                 right_side_final_inverted = []
             
                 for row in random_plus_identity.data:
