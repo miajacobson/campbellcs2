@@ -8,21 +8,21 @@
 
 import copy
 
-class matrix:
+class matrix:#creates class called 'matrix'
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
         self.data = [[0 for _ in range(cols)] for _ in range(rows)]
 
 
-    def print(self):
+    def print(self):#prints matrix
         for i in range(self.rows):
             for j in range(self.cols):
                 print(self.data[i][j], end=" ")
             print()
 
 
-    def plus(self, m1):
+    def plus(self, m1):#adds matrices
         
         ralph = matrix(3,3)
         
@@ -41,7 +41,7 @@ class matrix:
         return ralph
     
 
-    def times(self,m1):
+    def times(self,m1):#multiplies matrices
         
         ralph = matrix(3,3)
     
@@ -60,19 +60,19 @@ class matrix:
         return ralph
     
 
-    def scalarTimesRow(self, scalar, row):
+    def scalarTimesRow(self, scalar, row):#multiplies row of a matrix by a number
         for i, cell in enumerate(self.data[row]):
             self.data[row][int(i)] = cell * scalar
 
   
-    def MatrixswitchRows(self, row):
+    def MatrixswitchRows(self, row):#switches two rows in  a matrix
         row = row.split(",")
         r1 = int(row[0])
         r2 = int(row[1])
         self.data[r1], self.data[r2] =  self.data[r2], self.data[r1]
 
 
-    def MatrixlinearCombRows(self, row):
+    def MatrixlinearCombRows(self, row):#adds a scalar multiple of one row to another row
         row = row.split (",")
         r1 = float(row[0])
         r2 = int(row[1])
@@ -82,7 +82,44 @@ class matrix:
             self.data[r3][i] += r1*self.data[r2][i]
 
     
-    #def Matrixrowreduce(self):
+    '''def Matrixrowreduce(self):
+       
+        if self.Matrix_determinant() == 0:
+            print ("Determinant equals zero. Matrix Inverse DNE.")
+            return "kill"
+         
+        
+        if self.data[2][0] == 0:#finding 2,0
+            pass
+        else:#r3 = r3 + (-1*[2][0]*r1)
+            added_list = []
+            for i, cell in enumerate(self.data[0]):
+                added_list += [cell * (-1 * self.data[2][0])]
+        
+            for i, cell in enumerate(self.data[2]):
+                self.data[2][i] = cell + added_list[i]
+        
+    
+
+        if self.data[2][1] == 0:#finding 2,1
+            pass
+        else:#r3 = r3 + (-1*[2][1]*r2)
+            added_list = []
+            for i, cell in enumerate(self.data[1]):
+                added_list += [cell * (-1 * self.data[2][1])]
+        
+            for i, cell in enumerate(self.data[2]):
+                self.data[2][i] = cell + added_list[i]
+        
+        
+
+        if self.data[2][2] == 1:#finding 2,2
+            pass
+        else:#r3 = r3/([2][2])
+            a = copy.deepcopy(self.data[2][2])
+            for i, cell in enumerate(self.data[2]):
+                self.data[2][i] = cell / a  '''  
+
    
 
     def Matrix_determinant(self):
@@ -91,7 +128,6 @@ class matrix:
         d, e, f = self.data[1][:3]
         g, h, i = self.data[2][:3]
         return a*((e*i)-(f*h))-b*((d*i)-(f*g))+c*((d*h)-(e*g))
-                 
 
 
     def Matrix_invert(self):
@@ -196,14 +232,14 @@ class matrix:
                 self.data[0][i] = cell + added_list[i]
         
         
-        
+
         
 if __name__ == "__main__":
 
-    random_plus_identity = matrix(3,6)
-    random_plus_identity.data = [[1,2,3,1,0,0],
-                                 [4,5,6,0,1,0],
-                                 [7,8,9,0,0,1]]
+    random_plus_identity = matrix(3,6)#matrix used by inverse and rref and determinant functions 
+    random_plus_identity.data = [[1,4,7,1,0,0],
+                                 [10,13,16,0,1,0],
+                                 [19,21,24,0,0,1]]
 
     alice = matrix(3,3)
     alice.data = [[0,0,0],
@@ -292,20 +328,20 @@ if __name__ == "__main__":
 
         
         if select == '7':
-            choose = input("row reduce trixie or alice? (t or a)")
+            if random_plus_identity.Matrix_invert() != "kill":
+            
+                right_side_final_inverted = []
+            
+                for row in random_plus_identity.data:
+                    right_side_final_inverted += [row[:3]]
 
-            if choose == "t":
-                trixie.Matrixrowreduce()
-                trixie.print()
-
-            elif choose == "a":
-                alice.Matrixrowreduce(row)
-                alice.print()
+                for i in right_side_final_inverted:
+                    print(" ".join([str(j) for j in i]))
 
 
         if select == '8':
             if random_plus_identity.Matrix_invert() != "kill":
-                
+            
                 right_side_final_inverted = []
             
                 for row in random_plus_identity.data:
