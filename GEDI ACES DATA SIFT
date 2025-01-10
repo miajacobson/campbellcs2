@@ -1,3 +1,7 @@
+#Mia W. Jacobson
+#ACES Intersession Project - 'L4B Local Download and Process'
+#Description: Process GEDI data locally within specified spatial bounds.
+
 import rasterio
 import numpy as np
 from rasterio.mask import mask
@@ -6,14 +10,10 @@ import geopandas as gpd
 import os
 from pathlib import Path
 
+#Parameters: filepath (str): Path to the GEDI GeoTIFF file
+#bbox (list): Bounding box coordinates [minx, miny, maxx, maxy]
 def process_gedi_data(filepath, bbox):
-    """
-    Process GEDI data within specified spatial bounds
     
-    Parameters:
-    filepath (str): Path to the GEDI GeoTIFF file
-    bbox (list): Bounding box coordinates [minx, miny, maxx, maxy]
-    """
     try:
         # Convert filepath to Path object for better compatibility
         file_path = Path(filepath)
@@ -25,7 +25,7 @@ def process_gedi_data(filepath, bbox):
         bbox_geometry = box(*bbox)
         geo = gpd.GeoDataFrame({'geometry': [bbox_geometry]}, crs='EPSG:4326')
         
-        # Open and process the GEDI file
+        # Open and process MU GEDI file
         with rasterio.open(file_path) as src:
             print(f"\nFile information:")
             print(f"Driver: {src.driver}")
@@ -43,10 +43,10 @@ def process_gedi_data(filepath, bbox):
             print("\nExtracting data for specified bounding box...")
             out_image, out_transform = mask(src, geo.geometry, crop=True)
             
-            # Get the metadata
+            # Get metadata
             out_meta = src.meta.copy()
             
-            # Update metadata for the masked region
+            # Update metadata for masked region
             out_meta.update({
                 "height": out_image.shape[1],
                 "width": out_image.shape[2],
@@ -72,8 +72,7 @@ def process_gedi_data(filepath, bbox):
                 "std_biomass": np.std(valid_data) if len(valid_data) > 0 else 0,
                 "valid_pixels": len(valid_data),
                 "total_pixels": out_image.size,
-                "output_file": str(output_filename)
-            }
+                "output_file": str(output_filename) }
             
             return stats
 
@@ -82,10 +81,10 @@ def process_gedi_data(filepath, bbox):
         return None
 
 def main():
-    # Your specified filepath
+    # filepath
     filepath = r"C:\Users\mjacobson25\Downloads\GEDI_L4B_Gridded_Biomass_V2_1_2299\GEDI_L4B_Gridded_Biomass_V2_1_2299\data\GEDI04_B_MW019MW223_02_002_02_R01000M_MU.tif"
     
-    # Your specified bounding box
+    # bounding box of CO
     bbox = [-109.152780, 36.977701972427276, -102.01414290288865, 41.044382]
     
     print("Starting GEDI data processing...")
