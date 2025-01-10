@@ -1,0 +1,105 @@
+import rasterio
+import numpy as np
+from rasterio.mask import mask
+from shapely.geometry import box
+import geopandas as gpd
+import os
+from pathlib import Path
+
+def process_gedi_data(filepath, bbox):
+    """
+    Process GEDI data within specified spatial bounds
+    
+    Parameters:
+    filepath (str): Path to the GEDI GeoTIFF file
+    bbox (list): Bounding box coordinates [minx, miny, maxx, maxy]
+    """
+    try:
+        # Convert filepath to Path object for better compatibility
+        file_path = Path(filepath)
+        
+        if not file_path.exists():
+            raise FileNotFoundError(f"Could not find file: {filepath}")
+            
+        # Create a GeoJSON-like geometry from the bounding box
+        bbox_geometry = box(*bbox)
+        geo = gpd.GeoDataFrame({'geometry': [bbox_geometry]}, crs='EPSG:4326')
+        
+        # Open and process the GEDI file
+        with rasterio.open(file_path) as src:
+            print(f"\nFile information:")
+            print(f"Driver: {src.driver}")
+            print(f"File CRS: {src.crs}")
+            print(f"File bounds: {src.bounds}")
+            print(f"Number of bands: {src.count}")
+            print(f"Data type: {src.dtypes[0]}")
+            
+            # Reproject the geometry if necessary
+            if src.crs != geo.crs:
+                print(f"Reprojecting geometry from EPSG:4326 to {src.crs}")
+                geo = geo.to_crs(src.crs)
+            
+            # Mask the raster with our geometry
+            print("\nExtracting data for specified bounding box...")
+            out_image, out_transform = mask(src, geo.geometry, crop=True)
+            
+            # Get the metadata
+            out_meta = src.meta.copy()
+            
+            # Update metadata for the masked region
+            out_meta.update({
+                "height": out_image.shape[1],
+                "width": out_image.shape[2],
+                "transform": out_transform
+            })
+            
+            # Create output filename
+            output_dir = file_path.parent
+            output_filename = output_dir / f"{file_path.stem}_processed{file_path.suffix}"
+            
+            # Save the masked data
+            print(f"\nSaving processed data...")
+            with rasterio.open(output_filename, "w", **out_meta) as dest:
+                dest.write(out_image)
+            
+            # Calculate statistics for non-zero and non-nan values
+            valid_data = out_image[np.logical_and(out_image != 0, ~np.isnan(out_image))]
+            
+            stats = {
+                "mean_biomass": np.mean(valid_data) if len(valid_data) > 0 else 0,
+                "max_biomass": np.max(valid_data) if len(valid_data) > 0 else 0,
+                "min_biomass": np.min(valid_data) if len(valid_data) > 0 else 0,
+                "std_biomass": np.std(valid_data) if len(valid_data) > 0 else 0,
+                "valid_pixels": len(valid_data),
+                "total_pixels": out_image.size,
+                "output_file": str(output_filename)
+            }
+            
+            return stats
+
+    except Exception as e:
+        print(f"Error processing GEDI data: {str(e)}")
+        return None
+
+def main():
+    # Your specified filepath
+    filepath = r"C:\Users\mjacobson25\Downloads\GEDI_L4B_Gridded_Biomass_V2_1_2299\GEDI_L4B_Gridded_Biomass_V2_1_2299\data\GEDI04_B_MW019MW223_02_002_02_R01000M_MU.tif"
+    
+    # Your specified bounding box
+    bbox = [-109.152780, 36.977701972427276, -102.01414290288865, 41.044382]
+    
+    print("Starting GEDI data processing...")
+    results = process_gedi_data(filepath, bbox)
+    
+    if results:
+        print("\nProcessing Results:")
+        print(f"Mean biomass: {results['mean_biomass']:.2f}")
+        print(f"Maximum biomass: {results['max_biomass']:.2f}")
+        print(f"Minimum biomass: {results['min_biomass']:.2f}")
+        print(f"Standard deviation: {results['std_biomass']:.2f}")
+        print(f"Valid pixels: {results['valid_pixels']}")
+        print(f"Coverage percentage: {(results['valid_pixels']/results['total_pixels']*100):.2f}%")
+        print(f"\nOutput saved to: {results['output_file']}")
+
+if __name__ == "__main__":
+    main()
