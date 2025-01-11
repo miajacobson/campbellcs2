@@ -1,0 +1,101 @@
+#Mia W. Jacobson
+#ACES Intersession Project - ''
+#Description:
+
+import shapefile
+import pandas as pd
+from pathlib import Path
+from shapely.geometry import shape
+import rasterstats
+
+def analyze_watersheds_and_biomass(shp_path, raster_path):
+    """
+    Read watershed shapefile and analyze biomass data
+    
+    Parameters:
+    shp_path (str): Path to the watershed shapefile
+    raster_path (str): Path to the biomass raster file
+    """
+    try:
+        # Read the shapefile
+        print("Reading watershed shapefile...")
+        sf = shapefile.Reader(str(shp_path))
+        shapes = sf.shapes()
+        records = sf.records()
+        fields = [field[0] for field in sf.fields[1:]]
+        
+        print(f"Found {len(shapes)} watersheds")
+        print("Calculating biomass statistics for each watershed...")
+        
+        # Extract properties and create DataFrame
+        watersheds_data = []
+        for i, record in enumerate(records):
+            # Convert record to dictionary
+            properties = dict(zip(fields, record))
+            
+            # Calculate area using Shapely
+            geom = shape(shapes[i].__geo_interface__)
+            
+            # Calculate zonal statistics for biomass
+            stats = rasterstats.zonal_stats(
+                geom.__geo_interface__,
+                raster_path,
+                stats=['mean', 'max', 'min', 'std', 'median']
+            )[0]
+            
+            watersheds_data.append({
+                'Watershed_Name': properties.get('NAME', 'Unknown'),
+                'HUC8_Code': properties.get('HUC8', 'Unknown'),
+                'Area': geom.area,
+                'Mean_Biomass': stats.get('mean', 0),
+                'Max_Biomass': stats.get('max', 0),
+                'Min_Biomass': stats.get('min', 0),
+                'Std_Biomass': stats.get('std', 0),
+                'Median_Biomass': stats.get('median', 0)
+            })
+        
+        # Create DataFrame
+        summary = pd.DataFrame(watersheds_data)
+        
+        # Display basic information
+        print("\nDataset Information:")
+        print(f"Number of features: {len(summary)}")
+        print(f"Columns available: {', '.join(summary.columns)}")
+        
+        # Basic statistics about the watersheds
+        print("\nWatershed Statistics:")
+        print(f"Total area: {summary['Area'].sum():.2f} square units")
+        print(f"Average biomass across all watersheds: {summary['Mean_Biomass'].mean():.2f}")
+        
+        # Save to CSV
+        output_path = Path(shp_path).parent / 'watershed_biomass_summary.csv'
+        summary.to_csv(output_path, index=False)
+        
+        return summary
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return None
+
+def main():
+    # File paths
+    shp_path = r"C:\Users\mjacobson25\Downloads\CO-HUC8\CO-HUC8\wbdhu8_a_co.shp"
+    raster_path = r"C:\Users\mjacobson25\Downloads\GEDI_L4B_Gridded_Biomass_V2_1_2299\GEDI_L4B_Gridded_Biomass_V2_1_2299\data\GEDI04_B_MW019MW223_02_002_02_R01000M_MU.tif"
+    
+    print("Starting watershed and biomass analysis...")
+    results = analyze_watersheds_and_biomass(shp_path, raster_path)
+    
+    if results is not None:
+        print("\nAnalysis complete!")
+        print(f"\nResults saved to: {Path(shp_path).parent / 'watershed_biomass_summary.csv'}")
+        
+        # Display all watersheds with their statistics
+        print("\nComplete Watershed Analysis:")
+        pd.set_option('display.max_rows', None)  # Show all rows
+        pd.set_option('display.max_columns', None)  # Show all columns
+        pd.set_option('display.width', None)  # Don't wrap wide columns
+        print(results)
+
+if __name__ == "__main__":
+    main()
+
