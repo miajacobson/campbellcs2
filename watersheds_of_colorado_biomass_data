@@ -1,7 +1,3 @@
-#Mia W. Jacobson
-#ACES Intersession Project - ''
-#Description:
-
 import shapefile
 import pandas as pd
 from pathlib import Path
@@ -54,8 +50,9 @@ def analyze_watersheds_and_biomass(shp_path, raster_path):
                 'Median_Biomass': stats.get('median', 0)
             })
         
-        # Create DataFrame
+        # Create DataFrame and sort alphabetically by Watershed_Name
         summary = pd.DataFrame(watersheds_data)
+        summary = summary.sort_values(by='Watershed_Name', ascending=True)
         
         # Display basic information
         print("\nDataset Information:")
@@ -90,7 +87,7 @@ def main():
         print(f"\nResults saved to: {Path(shp_path).parent / 'watershed_biomass_summary.csv'}")
         
         # Display all watersheds with their statistics
-        print("\nComplete Watershed Analysis:")
+        print("\nComplete Watershed Analysis (Alphabetically Ordered):")
         pd.set_option('display.max_rows', None)  # Show all rows
         pd.set_option('display.max_columns', None)  # Show all columns
         pd.set_option('display.width', None)  # Don't wrap wide columns
@@ -98,4 +95,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
