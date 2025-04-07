@@ -1,0 +1,36 @@
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+# initial conditions
+global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y
+moon_position_x = 384400 # 0, how far the moon is from the earth
+moon_position_y = 0
+moon_vi_x = 0 # moon initial velocity in the x direction
+moon_vi_y = 1.022 # how fast the earth moves around the earth km/h
+moon_ai_x = 0 # moon initial acceleration in the x direction
+moon_ai_y = 0 # moon initial acceleration in the y direction
+gravity_constant = 6.67E-11
+earth_mass = 7.347E22
+delta_t = 20
+
+
+def update():
+
+    global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y, fig, ax, gravity_constant, earth_mass, delta_t
+    plt.cla() # clears graph
+    distance = abs((moon_position_x**2 + moon_position_y**2)**0.5) # pythagorean theorem to find distance between earth and moon
+    moon_ai_x = (-1*gravity_constant*earth_mass*moon_position_x)/(moon_position_x**2+moon_position_y**2)**1.5
+    moon_ai_y = (-1*gravity_constant*earth_mass*moon_position_y)/(moon_position_x**2+moon_position_y**2)**1.5
+    moon_vi_x += moon_ai_x*delta_t
+    moon_vi_y += moon_ai_y*delta_t
+    moon_position_x += moon_vi_x*delta_t
+    moon_position_y += moon_vi_y*delta_t
+
+
+    ax.plot(0, 0, "o", color = "g") # plot instructions for earth
+    ax.plot(moon_position_x, moon_position_y, "o", color = "k") # plot instructions for moon
+
+
+fig, ax = plt.subplots()
+animate = animation.FuncAnimation(fig=fig, func=update(), frames=5, interval=30)
+plt.show()
