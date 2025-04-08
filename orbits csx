@@ -1,36 +1,62 @@
+#Orbits Project- Kepler's Laws
+#Mia Jacobson
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.patches as patches
+
 
 # initial conditions
-global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y
-moon_position_x = 384400 # 0, how far the moon is from the earth
+global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y # makes these variables available anywhere in this script
+moon_position_x = 384400 # c: 0, how far the moon is from the earth
 moon_position_y = 0
 moon_vi_x = 0 # moon initial velocity in the x direction
-moon_vi_y = 1.022 # how fast the earth moves around the earth km/h
+moon_vi_y = 1.022 # c: how fast the moon moves around the earth km/h
 moon_ai_x = 0 # moon initial acceleration in the x direction
 moon_ai_y = 0 # moon initial acceleration in the y direction
-gravity_constant = 6.67E-11
-earth_mass = 7.347E22
-delta_t = 20
+gravity_constant = 6.6743E-20 #add here- why is it E-20 not E-11?
+earth_mass = 5.9722E24 # c:
+delta_t = 5000
 
+trail_x, trail_y = [], [] #sets up open lists for trail coordinates of the orbiting object
 
-def update():
+def update(frame): # updates moon attributes as motion continues
 
-    global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y, fig, ax, gravity_constant, earth_mass, delta_t
-    plt.cla() # clears graph
+    global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y, fig, ax, gravity_constant, earth_mass, delta_t, trail_x, trail_y
+    ax.cla() # clears graph
     distance = abs((moon_position_x**2 + moon_position_y**2)**0.5) # pythagorean theorem to find distance between earth and moon
-    moon_ai_x = (-1*gravity_constant*earth_mass*moon_position_x)/(moon_position_x**2+moon_position_y**2)**1.5
-    moon_ai_y = (-1*gravity_constant*earth_mass*moon_position_y)/(moon_position_x**2+moon_position_y**2)**1.5
-    moon_vi_x += moon_ai_x*delta_t
-    moon_vi_y += moon_ai_y*delta_t
-    moon_position_x += moon_vi_x*delta_t
-    moon_position_y += moon_vi_y*delta_t
+    print (distance)
+    moon_ai_x = (-1*gravity_constant*earth_mass*moon_position_x)/(moon_position_x**2+moon_position_y**2)**1.5 # calculates moon acceleration in x direction
+    moon_ai_y = (-1*gravity_constant*earth_mass*moon_position_y)/(moon_position_x**2+moon_position_y**2)**1.5 # calculates moon acceleration in y direction
+    moon_vi_x += moon_ai_x*delta_t # calculates moon velocity in x direction
+    moon_vi_y += moon_ai_y*delta_t # calculates moon velocity in y direction
+    moon_position_x += moon_vi_x*delta_t # calculates moon position in x direction
+    moon_position_y += moon_vi_y*delta_t # calculates moon position in y direction
+
+    #plotting objects on graph
+    ax.plot(0, 0, "o", color = "g", label="earth") # plot instructions for earth
+    ax.plot(moon_position_x, moon_position_y, "o", color = "gray", label="moon") # plot instructions for moon
+    plt.title("Moon's Orbit Around Earth by Mia Jacobson") # graph title
+
+    #adds base ellipse shape to graph to prove path of moon is an ellipse
+    ellipse = patches.Ellipse((0, 0), 768800, 768800, angle=90, edgecolor='r', facecolor='none', linestyle='--')
+    ax.add_patch(ellipse)
+
+    #graph set up
+    ax.set_xlim (-500000,500000) # limit of x-axis
+    ax.set_ylim (-500000,500000) # limit of y-axis
+    ax.set_aspect('equal') # makes x and y axis proportional to each other
+    ax.legend() # displays legend on graph
+
+    #use for trail line behind ball
+    trail_x += [moon_position_x]
+    trail_y += [moon_position_y]
+    ax.plot(trail_x, trail_y, linewidth=.5)
+
+    plt.text(-450500,-450500, f'Speed: {(moon_vi_x**2 + moon_vi_y**2)**.5}',fontsize=6, color="k")# include time in this?
 
 
-    ax.plot(0, 0, "o", color = "g") # plot instructions for earth
-    ax.plot(moon_position_x, moon_position_y, "o", color = "k") # plot instructions for moon
-
-
-fig, ax = plt.subplots()
-animate = animation.FuncAnimation(fig=fig, func=update(), frames=5, interval=30)
-plt.show()
+#bring to life
+fig, ax = plt.subplots() # puts together elements of 1)object and 2)graph attributes, to create an animation
+animate = animation.FuncAnimation (fig=fig, func=update, frames=500, interval=10)
+plt.show() # runs animation pop-up window
