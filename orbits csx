@@ -9,7 +9,7 @@ import matplotlib.patches as patches
 # initial conditions
 global moon_ai_x, moon_ai_y, moon_vi_x, moon_vi_y, moon_position_x, moon_position_y # makes these variables available anywhere in this script
 moon_position_x = 384400 # c: 0, how far the moon is from the earth
-moon_position_y = 0
+moon_position_y = 0 #moon starts on same line of sun (starting position lies on the x-axis)
 moon_vi_x = 0 # moon initial velocity in the x direction
 moon_vi_y = 1.022 # c: how fast the moon moves around the earth km/h
 moon_ai_x = 0 # moon initial acceleration in the x direction
@@ -34,8 +34,10 @@ def update(frame): # updates moon attributes as motion continues
     moon_position_y += moon_vi_y*delta_t # calculates moon position in y direction
 
     #plotting objects on graph
+
     ax.plot(0, 0, "o", color = "g", label="earth") # plot instructions for earth
     ax.plot(moon_position_x, moon_position_y, "o", color = "gray", label="moon") # plot instructions for moon
+    ax.set_facecolor('black') # graph backround color
     plt.title("Moon's Orbit Around Earth by Mia Jacobson") # graph title
 
     #adds base ellipse shape to graph to prove path of moon is an ellipse
@@ -48,15 +50,14 @@ def update(frame): # updates moon attributes as motion continues
     ax.set_aspect('equal') # makes x and y axis proportional to each other
     ax.legend() # displays legend on graph
 
-    #use for trail line behind ball
+    #update for trail line behind ball
     trail_x += [moon_position_x]
     trail_y += [moon_position_y]
     ax.plot(trail_x, trail_y, linewidth=.5)
-
-    plt.text(-450500,-450500, f'Speed: {(moon_vi_x**2 + moon_vi_y**2)**.5}',fontsize=6, color="k")# include time in this?
+    plt.text(-450500,-450500, f'Speed: {(moon_vi_x**2 + moon_vi_y**2)**.5}',fontsize=6.5, color="white")# calculates speed(magnitude of velocity)
 
 
 #bring to life
 fig, ax = plt.subplots() # puts together elements of 1)object and 2)graph attributes, to create an animation
-animate = animation.FuncAnimation (fig=fig, func=update, frames=500, interval=10)
+animate = animation.FuncAnimation (fig=fig, func=update, frames=500, interval=10) # animlaion graphics
 plt.show() # runs animation pop-up window
